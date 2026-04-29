@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dny bez Dana</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: rgba(255, 255, 255, 0.88);
+      --text: #18181b;
+      --muted: #6b7280;
+      --accent: #111827;
+      --border: rgba(17, 24, 39, 0.08);
+      --shadow: 0 20px 50px rgba(17, 24, 39, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.08), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.07), transparent 28%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .card {
+      width: min(680px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 40px 32px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.1;
+    }
+
+    .counter {
+      margin: 28px 0 12px;
+      font-size: clamp(72px, 15vw, 132px);
+      line-height: 0.95;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: var(--accent);
+    }
+
+    .label {
+      font-size: clamp(18px, 2.5vw, 24px);
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .meta {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.9);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .note {
+      margin-top: 26px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    code {
+      background: rgba(17, 24, 39, 0.06);
+      border-radius: 8px;
+      padding: 2px 6px;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p class="eyebrow">Live counter</p>
+    <h1>Dny bez Dana</h1>
+
+    <div id="counter" class="counter">0</div>
+    <div id="label" class="label">dnů</div>
+
+    <div class="meta">
+      <div class="pill">Od data: <span id="startDateText"></span></div>
+      </div>
+  </main>
+
+  <script>
+    // Zde nastav počáteční datum ve formátu RRRR-MM-DD
+    const startDate = '2026-06-30';
+
+    function pluralizeDays(count) {
+      const mod10 = count % 10;
+      const mod100 = count % 100;
+
+      if (mod10 === 1 && mod100 !== 11) return 'den';
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'dny';
+      return 'dnů';
+    }
+
+    function updateCounter() {
+      const start = new Date(startDate + 'T00:00:00');
+      const now = new Date();
+
+      const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      const diffMs = todayMidnight - startMidnight;
+      const diffDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+
+      document.getElementById('counter').textContent = diffDays;
+      document.getElementById('label').textContent = pluralizeDays(diffDays);
+      document.getElementById('startDateText').textContent = start.toLocaleDateString('cs-CZ');
+    }
+
+    updateCounter();
+    setInterval(updateCounter, 60 * 1000);
+  </script>
+</body>
+</html>
